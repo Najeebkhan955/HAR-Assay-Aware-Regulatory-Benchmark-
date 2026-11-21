@@ -1,6 +1,6 @@
 # HAR research — code archive
 
-This folder contains **98 verified code files** recovered from the user's available Stage 1–25 research archives: **42 Jupyter notebooks**, **55 Python scripts** and **1 shell script**. Some files intentionally duplicate source bytes in archival and reproducible layouts.
+This folder contains **108 verified code files** recovered from the user's available Stage 1–25 research archives: **42 Jupyter notebooks**, **65 Python scripts** and **1 shell script**. Some files intentionally duplicate source bytes in archival and reproducible layouts.
 
 ## Find the appropriate code
 
@@ -26,10 +26,16 @@ Reproducible assay-aware secondary analyses assess provisional ortholog mappings
 
 ### Integrity verification
 
-The 98 files were compared byte-for-byte at the Git blob hash level against the original uploaded/archive source files: **98/98 exact matches**, including notebooks. Local JSON notebook validation and Python AST parsing passed; this does **not** mean every notebook has been executed against its live external inputs.
+The 108 source-code files were compared at the Git blob hash level against their uploaded or recovered original byte content: **108/108 exact matches**, including notebooks. Local JSON notebook validation and Python AST parsing passed; this does **not** mean every notebook has been executed against its live external inputs.
 
 ### Recovered code added 21 November 2026
 
 The user supplied the original GSE270828 full-guide-reference notebook (Stage 3), public perturbation-effect source locator (Stage 6), and the Stage 7 RDS/GZIP rescue notebook. All three were added as exact original JSON notebooks, without normalizing their contents. Fifteen other supplied notebook copies were already byte-for-byte identical to the repository. The Stage 16B ZIP contained a Python script already present with an identical Git blob hash; only its results remain for the later **results/data upload** phase.
 
 A Colab notebook that contains shell magics must be run in a compatible environment; generic Python AST parsing is not a valid runtime test for shell-magic cells.
+
+### Additional archived code recovered from historical research ZIPs
+
+8 unique Python programs found in prior Stage 19/19A/20A/21D/23 output archives have now been restored under `01_workflow/recovered_scripts/` and `tools/manifest/`. Two internal archive-construction helpers are retained separately under `tools/archive_assembly/` for completeness; these helpers are not original biological-analysis code. Each file's original archive/path and SHA-256 are recorded in [`CODE_PROVENANCE_ADDENDUM.csv`](CODE_PROVENANCE_ADDENDUM.csv).
+
+Some stage-specific methods were executed interactively, and their original standalone script was never archived or is no longer available. **Missing original scripts are not reconstructed and falsely labeled original.** Public code availability does not prove that every stage can be reproduced without external data, compatible runtime, or permissions.
