@@ -4,7 +4,7 @@
 
 **Research objective.** Evaluate which regulatory conclusions are supported across assays, distinguish construct-level reporter effects from endogenous HAR–gene mechanisms, and document limitations from genomic coordinate matching, fragment selection, replication, and statistical calibration.
 
-**Status (21 November 2026).** Stage-wise recovered code archive is **online and checksum-verified**: 108 source-code files (42 Jupyter notebooks, 65 Python scripts, and 1 shell script). Public GEO raw data, derived results, images and 10–12 curated final supplements will be uploaded and audited in separate stages, after checking attribution and redistribution restrictions.
+**Status (22 November 2026).** Stage-wise recovered code archive is **online and checksum-verified**: 108 source-code files (42 Jupyter notebooks, 65 Python scripts, and 1 shell script). The 12 curated final supplements and final figure files were audited locally in Stage 29, but their binary files are **not yet deposited in this repository**; attribution and redistribution checks still apply.
 
 **Key public accessions.** [GSE270828](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE270828) and [GSE110758](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE110758).
 
@@ -31,4 +31,12 @@ The first user-provided input/output batch contains **19 original files**, repre
 - [Batch 01 source details, attribution and reconstruction instructions](provenance/batches/B01_2026-11-21/README.md)
 - [Restore all 19 originals and check SHA-256 locally](code/tools/verify_batch01_reconstruction.py)
 
-Third-party GEO/CHiCAGO source files retain original attribution. `GSE270828_Full_Guide_Reference_FOR_REVIEW.zip` contains guide/source metadata rather than the complete single-cell expression matrix. Further Colab input/results batches and the final curated 10–12 supplementary files remain pending.
+Third-party GEO/CHiCAGO source files retain original attribution. `GSE270828_Full_Guide_Reference_FOR_REVIEW.zip` contains guide/source metadata rather than the complete single-cell expression matrix. Further Colab input/results batches and final S01–S12 binary uploads remain pending; the local Stage 29 release package has been prepared and its source-verification scope is documented below.
+
+## Stage 29 — raw-source verification and final supplement audit (22 November 2026)
+
+The **HS1-11** original HAR design + 6 culture source files passed **7/7 recorded SHA-256/size checks**, and **342/342** reconstructed reporter effects agreed with corrected reference values (maximum difference 9.71e-17). The **WTc** six original culture files passed **6/6 recorded SHA-256/size checks**; **342/342** effects agreed exactly (maximum difference zero). The resulting **114 matched cuts across 66 HARs** show Pearson r = **0.543083**, Spearman ρ = **0.627249**, **86/114** matching mean directions and **48/114** stable six-culture directions. These are two **human iPSC backgrounds**, with human/chimp denoting **reporter DNA alleles**.
+
+The Stage 27 coordinate recheck reproduced **304/304** archived eligibility flags relative to *secondary-catalog* ±300 bp windows (300 inside, 4 outside). Of 180 screened HAR labels, 152 have **provisional** sequence crosswalks and 28 remain unresolved. Original Noble author **hg38/panTro6 target BED authentication remains incomplete**; four secondary-window deviations must not be called experimentally confirmed guide errors.
+
+[Detailed Stage 29 source and deposition status](provenance/verification/STAGE29_FINAL_AUDIT_2026-11-22.md). The 12 curated Excel workbooks, 13 final PNG figure panels, vector PDFs and validation ZIP reports are assembled in an offline author release, but **their binary uploads have not been independently confirmed in this repository**. Do not cite this repository as a complete final-data deposit until the actual files are uploaded and hash-checked. Original source GEO data remain accessible through the accession links above.
