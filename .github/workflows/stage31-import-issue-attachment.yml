@@ -24,7 +24,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import os, re, io, csv, json, zipfile, hashlib, pathlib, urllib.parse, urllib.request
-          EXPECTED_SHA = "f4d9e50b006481e8021ea86e5701b5df7a53782881c050fe32cb9e65c90a598a"
+          EXPECTED_SHA = "395638272f3b7c2ef2c763b7f1a1daf4a5d81bb00ab8bf6ad2263c592662812a"
           with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as fh:
               event=json.load(fh)
           comment=event["comment"]
@@ -47,11 +47,12 @@ jobs:
           destinations={}
           with zipfile.ZipFile(io.BytesIO(data)) as z:
               names=z.namelist()
-              assert len(names)==60 and len(set(names))==60 and z.testzip() is None,"ZIP structure mismatch"
+              assert len(names)==59 and len(set(names))==59 and z.testzip() is None,"ZIP structure mismatch"
+              assert not any(n.startswith("Manuscript/") or n.lower().endswith(".docx") for n in names),"public ZIP must exclude unpublished Word manuscript"
               all_names=set(names)
-              assert "STAGE31_COMPLETE_Package_SHA256.csv" in all_names
-              rows=list(csv.DictReader(io.StringIO(z.read("STAGE31_COMPLETE_Package_SHA256.csv").decode("utf-8-sig"))))
-              assert len(rows)==60 and {x["file"] for x in rows}==all_names,"file manifest mismatch"
+              assert "STAGE31_PUBLIC_File_SHA256_Manifest.csv" in all_names
+              rows=list(csv.DictReader(io.StringIO(z.read("STAGE31_PUBLIC_File_SHA256_Manifest.csv").decode("utf-8-sig"))))
+              assert len(rows)==58 and {x["file"] for x in rows}==all_names-{"STAGE31_PUBLIC_File_SHA256_Manifest.csv"},"file manifest mismatch"
               for entry in rows:
                   name=entry["file"]
                   src=z.getinfo(name)
@@ -60,10 +61,6 @@ jobs:
                   payload=z.read(name)
                   assert int(entry["bytes"])==len(payload)
                   assert hashlib.sha256(payload).hexdigest()==entry["sha256"]
-                  # Do not deposit unpublished manuscript.
-                  if name.startswith("Manuscript/"):
-                      assert name=="Manuscript/HAR_FINAL_Revised_Statistical_Manuscript.docx"
-                      continue
                   if name.startswith("Supplementary_Excel/"):
                       dest="supplementary/"+name[len("Supplementary_Excel/"):]
                       assert dest.endswith(".xlsx")
@@ -75,13 +72,14 @@ jobs:
                       assert dest.endswith((".png",".pdf"))
                   elif name=="Figure_and_Table_Legends.md":
                       dest="figures/FIGURE_TABLE_LEGENDS.md"
-                  elif name in {"STAGE31_Submission_Requirements.md","STAGE31_Final_Quality_and_Submission_Audit.json","STAGE31_COMPLETE_Package_SHA256.csv"}:
+                  elif name in {"STAGE31_Submission_Requirements.md","STAGE31_Final_Quality_and_Submission_Audit.json","STAGE31_PUBLIC_File_SHA256_Manifest.csv"}:
                       dest="provenance/verification/"+name
                   else:
                       raise ValueError("Unexpected source ZIP entry "+name)
                   if dest in destinations:
                       raise ValueError("duplicate destination")
                   destinations[dest]=payload
+              destinations["provenance/verification/STAGE31_PUBLIC_File_SHA256_Manifest.csv"]=z.read("STAGE31_PUBLIC_File_SHA256_Manifest.csv")
           assert len(destinations)==59, f"unexpected published file count: {len(destinations)}"
           for dest,payload in destinations.items():
               target=root.joinpath(*pathlib.PurePosixPath(dest).parts)
