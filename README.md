@@ -4,7 +4,7 @@
 
 **Research objective.** Evaluate which regulatory conclusions are supported across assays, distinguish construct-level reporter effects from endogenous HAR–gene mechanisms, and document limitations from genomic coordinate matching, fragment selection, replication, and statistical calibration.
 
-**Status (22 November 2026).** Stage-wise recovered code archive is **online and checksum-verified**: 108 source-code files (42 Jupyter notebooks, 65 Python scripts, and 1 shell script). The 12 curated final supplements and final figure files were audited locally in Stage 29, but their binary files are **not yet deposited in this repository**; attribution and redistribution checks still apply.
+**Status (22 November 2026).** Stage-wise recovered code archive is **online and checksum-verified**: 108 source-code files (42 Jupyter notebooks, 65 Python scripts, and 1 shell script). Stage 31 contains **17 prepared Excel supplements (S01–S17), 9 main and 10 Extended Data figure pairs**, and a checksum-audited local release ZIP. Stage 31 [release documentation](releases/stage31/RELEASE_NOTES.md) and a [token-free GitHub issue importer](.github/workflows/stage31-import-issue-attachment.yml) are public; **binary files remain pending until the ZIP import succeeds**. Attribution and redistribution requirements still apply.
 
 **Key public accessions.** [GSE270828](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE270828) and [GSE110758](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE110758).
 
@@ -40,3 +40,8 @@ The **HS1-11** original HAR design + 6 culture source files passed **7/7 recorde
 The Stage 27 coordinate recheck reproduced **304/304** archived eligibility flags relative to *secondary-catalog* ±300 bp windows (300 inside, 4 outside). Of 180 screened HAR labels, 152 have **provisional** sequence crosswalks and 28 remain unresolved. Original Noble author **hg38/panTro6 target BED authentication remains incomplete**; four secondary-window deviations must not be called experimentally confirmed guide errors.
 
 [Detailed Stage 29 source and deposition status](provenance/verification/STAGE29_FINAL_AUDIT_2026-11-22.md). The 12 curated Excel workbooks, 13 final PNG figure panels, vector PDFs and validation ZIP reports are assembled in an offline author release, but **their binary uploads have not been independently confirmed in this repository**. Do not cite this repository as a complete final-data deposit until the actual files are uploaded and hash-checked. Original source GEO data remain accessible through the accession links above.
+
+
+## Stage 31 — final manuscript-aligned statistical release
+
+The statistical manuscript was reconciled with supplementary S01–S17. Data-derived Figure 9 and updated Figures 6–7 use the final Stage 30 clustered estimates and calibrated nulls. The unpublished Word manuscript is **excluded** from this repository's public deposit. [Stage 31 release notes and authoritative SHA-256](releases/stage31/RELEASE_NOTES.md) explain provenance, manuscript caveats, and upload verification. The repository owner may use [issue #1](issues/1) to attach the verified 17.1 MB ZIP; the repository [Actions importer](.github/workflows/stage31-import-issue-attachment.yml) checks the owner, exact SHA-256 and every source file before committing release materials. Do not claim this is a complete public release until the binary files can be opened under `supplementary/` and `figures/`.
