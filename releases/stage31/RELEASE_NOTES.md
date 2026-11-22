@@ -1,4 +1,4 @@
-# Stage 31 — final computational HAR evidence benchmark release
+# HAR supplementary statistical evidence and figure release
 
 **Prepared:** 22 November 2026  
 **Repository:** [HAR Assay-Aware Regulatory Benchmark](https://github.com/Najeebkhan955/HAR-Assay-Aware-Regulatory-Benchmark-)  
@@ -7,17 +7,17 @@
 
 ## Prepared immutable package
 
-`HAR_STAGE31_PUBLIC_ONLY_S01-S17_Figures_Verified.zip`
+`HAR_Supplementary_Data_and_Figures_Public_Release.zip`
 
-- ZIP bytes: **9,178,514**
-- ZIP SHA-256: `395638272f3b7c2ef2c763b7f1a1daf4a5d81bb00ab8bf6ad2263c592662812a`
-- ZIP integrity: **PASS**; exactly 59 public-safe members.
+- ZIP bytes: **9,185,548**
+- ZIP SHA-256: `eaa92a8520171625f90fa8b45438c168a91772c7cf2e1038b9a4d878e0f1588c`
+- ZIP integrity: **PASS**; exactly 60 public-safe members.
 - Contents: **no unpublished manuscript**; **S01–S17** Excel workbooks; nine main figures each in PNG+PDF; ten Extended Data figures each in PNG+PDF; legends, QC/requirements files, and complete per-file SHA-256 manifest.
-- Expected GitHub deposit: **59 public files**: 58 data/figure/QA entries plus one public checksum manifest.
+- Expected GitHub deposit: **60 public files**: 59 checked entries plus one SHA-256 manifest.
 
 ## Owner-controlled upload without a personal access token
 
-**[Upload issue #1](https://github.com/Najeebkhan955/HAR-Assay-Aware-Regulatory-Benchmark-/issues/1)** is configured with an owner-only GitHub Actions import workflow. The repository owner attaches the exact prepared 9.2 MB public-only ZIP in a new issue comment and adds `PUBLISH STAGE31` on its own line. The workflow rejects a different archive SHA-256, checks internal per-file checksums, excludes the unpublished DOCX, writes only whitelisted release paths, and commits to `main` using the repository's GitHub Actions token.
+**[Upload issue #1](https://github.com/Najeebkhan955/HAR-Assay-Aware-Regulatory-Benchmark-/issues/1)** is configured with an owner-only GitHub Actions import workflow. The repository owner attaches the exact prepared 9.2 MB public-only ZIP in a new issue comment and adds `PUBLISH SUPPLEMENTS` on its own line. The workflow rejects a different archive SHA-256, checks internal per-file checksums, excludes the unpublished DOCX, writes only whitelisted release paths, and commits to `main` using the repository's GitHub Actions token.
 
 **[Importer workflow](../../.github/workflows/stage31-import-issue-attachment.yml)**
 
@@ -39,4 +39,8 @@
 
 ## Release and disclosure boundaries
 
-Full original GEO single-cell matrices, the original Noble `hars_hg38.bed`/`hars_panTro6.bed`, and a repository DOI are **not** represented as uploaded or verified. Reuse of source assets requires attribution to primary studies. Author names, funders and journal-specific submissions must be author-confirmed. Stage31 package is separately available in the ongoing manuscript-preparation conversation prior to GitHub import.
+Full original GEO single-cell matrices, the original Noble `hars_hg38.bed`/`hars_panTro6.bed`, and a repository DOI are **not** represented as uploaded or verified. Reuse of source assets requires attribution to primary studies. Author names, funders and journal-specific submissions must be author-confirmed. The journal-style public ZIP is separately available in the ongoing manuscript-preparation conversation prior to GitHub import.
+
+## Journal-style file names
+
+The public archive uses supplementary identifiers S01–S17 with descriptive discipline-specific filenames (e.g., `S06_Integrated_Source_Quality_Control.xlsx`, `S10_Independent_Human_Cell_Line_Replication.xlsx`). Historical processing-stage labels are not used in archive filenames. `FILE_NAME_CROSSWALK.csv` records every old and new filename and source SHA-256; each Excel workbook remains byte-identical to the reviewed input. `FILE_SHA256_MANIFEST.csv` covers all other public release files.
