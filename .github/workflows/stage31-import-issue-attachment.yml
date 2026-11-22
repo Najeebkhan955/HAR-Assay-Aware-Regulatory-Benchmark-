@@ -56,7 +56,7 @@ jobs:
                   name=entry["file"]
                   src=z.getinfo(name)
                   assert not name.startswith("/") and ".." not in pathlib.PurePosixPath(name).parts
-                  assert "\\" not in name and not name.endswith("/") and not (src.external_attr>>16)&0o120000
+                  assert "\\" not in name and not name.endswith("/") and ((src.external_attr>>16)&0o170000)!=0o120000
                   payload=z.read(name)
                   assert int(entry["bytes"])==len(payload)
                   assert hashlib.sha256(payload).hexdigest()==entry["sha256"]
