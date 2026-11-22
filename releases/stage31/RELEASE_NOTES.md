@@ -7,21 +7,21 @@
 
 ## Prepared immutable package
 
-`HAR_STAGE31_COMPLETE_Submission_Manuscript_Figures_S01-S17.zip`
+`HAR_STAGE31_PUBLIC_ONLY_S01-S17_Figures_Verified.zip`
 
-- ZIP bytes: **17,094,487**
-- ZIP SHA-256: `f4d9e50b006481e8021ea86e5701b5df7a53782881c050fe32cb9e65c90a598a`
-- ZIP integrity: **PASS**; exactly 60 members.
-- Contents: one **unpublished** master DOCX (excluded from GitHub commit); **S01–S17** Excel workbooks; nine main figures each in PNG+PDF; ten Extended Data figures each in PNG+PDF; legends, QC/requirements files, and complete per-file SHA-256 manifest.
-- Expected GitHub deposit: **59 files** after excluding the manuscript.
+- ZIP bytes: **9,178,514**
+- ZIP SHA-256: `395638272f3b7c2ef2c763b7f1a1daf4a5d81bb00ab8bf6ad2263c592662812a`
+- ZIP integrity: **PASS**; exactly 59 public-safe members.
+- Contents: **no unpublished manuscript**; **S01–S17** Excel workbooks; nine main figures each in PNG+PDF; ten Extended Data figures each in PNG+PDF; legends, QC/requirements files, and complete per-file SHA-256 manifest.
+- Expected GitHub deposit: **59 public files**: 58 data/figure/QA entries plus one public checksum manifest.
 
 ## Owner-controlled upload without a personal access token
 
-**[Upload issue #1](https://github.com/Najeebkhan955/HAR-Assay-Aware-Regulatory-Benchmark-/issues/1)** is configured with an owner-only GitHub Actions import workflow. The repository owner attaches the exact prepared 17.1 MB ZIP in a new issue comment and adds `PUBLISH STAGE31` on its own line. The workflow rejects a different archive SHA-256, checks internal per-file checksums, excludes the unpublished DOCX, writes only whitelisted release paths, and commits to `main` using the repository's GitHub Actions token.
+**[Upload issue #1](https://github.com/Najeebkhan955/HAR-Assay-Aware-Regulatory-Benchmark-/issues/1)** is configured with an owner-only GitHub Actions import workflow. The repository owner attaches the exact prepared 9.2 MB public-only ZIP in a new issue comment and adds `PUBLISH STAGE31` on its own line. The workflow rejects a different archive SHA-256, checks internal per-file checksums, excludes the unpublished DOCX, writes only whitelisted release paths, and commits to `main` using the repository's GitHub Actions token.
 
 **[Importer workflow](../../.github/workflows/stage31-import-issue-attachment.yml)**
 
-The above is a prepared workflow, not proof of a successful upload. Check the `Actions` run and GitHub file tree to establish publication. Do not cite a complete data deposition until files exist.
+**Do not attach the older complete submission ZIP:** it contains an unpublished Word manuscript. Attach only the safe public-only ZIP above. The above is a prepared workflow, not proof of a successful upload. Check the `Actions` run and GitHub file tree to establish publication. Do not cite a complete data deposition until files exist.
 
 ## Scientific reproducibility summary
 
