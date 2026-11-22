@@ -1,4 +1,4 @@
-name: Import verified Stage31 supplementary release
+name: Publish validated HAR supplementary release
 on:
   issue_comment:
     types: [created]
@@ -6,7 +6,7 @@ permissions:
   contents: write
   issues: read
 concurrency:
-  group: stage31-owner-import
+  group: har-supplementary-owner-import
   cancel-in-progress: false
 
 jobs:
@@ -19,25 +19,25 @@ jobs:
         with:
           ref: main
           persist-credentials: true
-      - name: Download and authenticate the owner-submitted Stage31 ZIP
+      - name: Download and authenticate the owner-submitted final supplementary ZIP
         shell: bash
         run: |
           python3 - <<'PY'
           import os, re, io, csv, json, zipfile, hashlib, pathlib, urllib.parse, urllib.request
-          EXPECTED_SHA = "395638272f3b7c2ef2c763b7f1a1daf4a5d81bb00ab8bf6ad2263c592662812a"
+          EXPECTED_SHA = "eaa92a8520171625f90fa8b45438c168a91772c7cf2e1038b9a4d878e0f1588c"
           with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as fh:
               event=json.load(fh)
           comment=event["comment"]
           assert event["issue"]["number"]==1 and not event["issue"].get("pull_request")
           assert comment["user"]["login"]=="Najeebkhan955", "only repository owner may release"
           body=comment.get("body","")
-          assert re.search(r"(?m)^PUBLISH STAGE31\s*$",body), "comment needs its own PUBLISH STAGE31 line"
+          assert re.search(r"(?m)^PUBLISH SUPPLEMENTS\s*$",body), "comment needs its own PUBLISH STAGE31 line"
           links=re.findall(r"https://github\.com/user-attachments/files/[0-9]+/[^\s\)\]<>]+?\.zip(?:\?[^\s\)\]<>]*)?",body)
           assert len(links)==1, f"expected exactly 1 official GitHub ZIP attachment, found {len(links)}"
           url=links[0]
           u=urllib.parse.urlsplit(url)
           assert u.scheme=="https" and u.netloc=="github.com" and u.path.startswith("/user-attachments/files/")
-          req=urllib.request.Request(url,headers={"User-Agent":"HAR-stage31-verification-importer"})
+          req=urllib.request.Request(url,headers={"User-Agent":"HAR-supplementary-verification-importer"})
           with urllib.request.urlopen(req,timeout=300) as response:
               data=response.read(25_000_001)
           assert len(data)<=25_000_000,"attachment exceeds 25 MB"
@@ -47,12 +47,12 @@ jobs:
           destinations={}
           with zipfile.ZipFile(io.BytesIO(data)) as z:
               names=z.namelist()
-              assert len(names)==59 and len(set(names))==59 and z.testzip() is None,"ZIP structure mismatch"
+              assert len(names)==60 and len(set(names))==60 and z.testzip() is None,"ZIP structure mismatch"
               assert not any(n.startswith("Manuscript/") or n.lower().endswith(".docx") for n in names),"public ZIP must exclude unpublished Word manuscript"
               all_names=set(names)
-              assert "STAGE31_PUBLIC_File_SHA256_Manifest.csv" in all_names
-              rows=list(csv.DictReader(io.StringIO(z.read("STAGE31_PUBLIC_File_SHA256_Manifest.csv").decode("utf-8-sig"))))
-              assert len(rows)==58 and {x["file"] for x in rows}==all_names-{"STAGE31_PUBLIC_File_SHA256_Manifest.csv"},"file manifest mismatch"
+              assert "FILE_SHA256_MANIFEST.csv" in all_names
+              rows=list(csv.DictReader(io.StringIO(z.read("FILE_SHA256_MANIFEST.csv").decode("utf-8-sig"))))
+              assert len(rows)==59 and {x["file"] for x in rows}==all_names-{"FILE_SHA256_MANIFEST.csv"},"file manifest mismatch"
               for entry in rows:
                   name=entry["file"]
                   src=z.getinfo(name)
@@ -72,15 +72,15 @@ jobs:
                       assert dest.endswith((".png",".pdf"))
                   elif name=="Figure_and_Table_Legends.md":
                       dest="figures/FIGURE_TABLE_LEGENDS.md"
-                  elif name in {"STAGE31_Submission_Requirements.md","STAGE31_Final_Quality_and_Submission_Audit.json","STAGE31_PUBLIC_File_SHA256_Manifest.csv"}:
+                  elif name in {"Submission_Readiness_Checklist.md","Scientific_Quality_Assurance_Summary.json","FILE_NAME_CROSSWALK.csv"}:
                       dest="provenance/verification/"+name
                   else:
                       raise ValueError("Unexpected source ZIP entry "+name)
                   if dest in destinations:
                       raise ValueError("duplicate destination")
                   destinations[dest]=payload
-              destinations["provenance/verification/STAGE31_PUBLIC_File_SHA256_Manifest.csv"]=z.read("STAGE31_PUBLIC_File_SHA256_Manifest.csv")
-          assert len(destinations)==59, f"unexpected published file count: {len(destinations)}"
+              destinations["provenance/verification/FILE_SHA256_MANIFEST.csv"]=z.read("FILE_SHA256_MANIFEST.csv")
+          assert len(destinations)==60, f"unexpected published file count: {len(destinations)}"
           for dest,payload in destinations.items():
               target=root.joinpath(*pathlib.PurePosixPath(dest).parts)
               target.parent.mkdir(parents=True,exist_ok=True)
@@ -95,9 +95,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- supplementary/ figures/ provenance/verification/
           if git diff --cached --quiet; then
-            echo "All 59 Stage31 release files already identical. No changes."
+            echo "All 59 final supplementary release files already identical. No changes."
           else
-            git commit -m "Deposit Stage31 verified S01-S17 and data-derived figures"
+            git commit -m "Deposit final supplementary verified S01-S17 and data-derived figures"
             git push origin HEAD:main
-            echo "PASS: Stage31 files committed to main."
+            echo "PASS: final supplementary files committed to main."
           fi
