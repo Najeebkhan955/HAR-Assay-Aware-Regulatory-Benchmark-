@@ -1,0 +1,105 @@
+name: Import verified Stage31 supplementary release
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: write
+  issues: read
+concurrency:
+  group: stage31-owner-import
+  cancel-in-progress: false
+
+jobs:
+  import-release:
+    if: ${{ github.repository == 'Najeebkhan955/HAR-Assay-Aware-Regulatory-Benchmark-' && github.event.issue.number == 1 && github.event.comment.user.login == 'Najeebkhan955' && !github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Download and authenticate the owner-submitted Stage31 ZIP
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, re, io, csv, json, zipfile, hashlib, pathlib, urllib.parse, urllib.request
+          EXPECTED_SHA = "f4d9e50b006481e8021ea86e5701b5df7a53782881c050fe32cb9e65c90a598a"
+          with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as fh:
+              event=json.load(fh)
+          comment=event["comment"]
+          assert event["issue"]["number"]==1 and not event["issue"].get("pull_request")
+          assert comment["user"]["login"]=="Najeebkhan955", "only repository owner may release"
+          body=comment.get("body","")
+          assert re.search(r"(?m)^PUBLISH STAGE31\s*$",body), "comment needs its own PUBLISH STAGE31 line"
+          links=re.findall(r"https://github\.com/user-attachments/files/[0-9]+/[^\s\)\]<>]+?\.zip(?:\?[^\s\)\]<>]*)?",body)
+          assert len(links)==1, f"expected exactly 1 official GitHub ZIP attachment, found {len(links)}"
+          url=links[0]
+          u=urllib.parse.urlsplit(url)
+          assert u.scheme=="https" and u.netloc=="github.com" and u.path.startswith("/user-attachments/files/")
+          req=urllib.request.Request(url,headers={"User-Agent":"HAR-stage31-verification-importer"})
+          with urllib.request.urlopen(req,timeout=300) as response:
+              data=response.read(25_000_001)
+          assert len(data)<=25_000_000,"attachment exceeds 25 MB"
+          actual=hashlib.sha256(data).hexdigest()
+          assert actual==EXPECTED_SHA, f"ZIP SHA-256 mismatch: {actual}; no files written"
+          root=pathlib.Path.cwd()
+          destinations={}
+          with zipfile.ZipFile(io.BytesIO(data)) as z:
+              names=z.namelist()
+              assert len(names)==60 and len(set(names))==60 and z.testzip() is None,"ZIP structure mismatch"
+              all_names=set(names)
+              assert "STAGE31_COMPLETE_Package_SHA256.csv" in all_names
+              rows=list(csv.DictReader(io.StringIO(z.read("STAGE31_COMPLETE_Package_SHA256.csv").decode("utf-8-sig"))))
+              assert len(rows)==60 and {x["file"] for x in rows}==all_names,"file manifest mismatch"
+              for entry in rows:
+                  name=entry["file"]
+                  src=z.getinfo(name)
+                  assert not name.startswith("/") and ".." not in pathlib.PurePosixPath(name).parts
+                  assert "\\" not in name and not name.endswith("/") and not (src.external_attr>>16)&0o120000
+                  payload=z.read(name)
+                  assert int(entry["bytes"])==len(payload)
+                  assert hashlib.sha256(payload).hexdigest()==entry["sha256"]
+                  # Do not deposit unpublished manuscript.
+                  if name.startswith("Manuscript/"):
+                      assert name=="Manuscript/HAR_FINAL_Revised_Statistical_Manuscript.docx"
+                      continue
+                  if name.startswith("Supplementary_Excel/"):
+                      dest="supplementary/"+name[len("Supplementary_Excel/"):]
+                      assert dest.endswith(".xlsx")
+                  elif name.startswith("Main_Figures/"):
+                      dest="figures/main/"+name[len("Main_Figures/"):]
+                      assert dest.endswith((".png",".pdf"))
+                  elif name.startswith("Extended_Data_Figures/"):
+                      dest="figures/extended_data/"+name[len("Extended_Data_Figures/"):]
+                      assert dest.endswith((".png",".pdf"))
+                  elif name=="Figure_and_Table_Legends.md":
+                      dest="figures/FIGURE_TABLE_LEGENDS.md"
+                  elif name in {"STAGE31_Submission_Requirements.md","STAGE31_Final_Quality_and_Submission_Audit.json","STAGE31_COMPLETE_Package_SHA256.csv"}:
+                      dest="provenance/verification/"+name
+                  else:
+                      raise ValueError("Unexpected source ZIP entry "+name)
+                  if dest in destinations:
+                      raise ValueError("duplicate destination")
+                  destinations[dest]=payload
+          assert len(destinations)==59, f"unexpected published file count: {len(destinations)}"
+          for dest,payload in destinations.items():
+              target=root.joinpath(*pathlib.PurePosixPath(dest).parts)
+              target.parent.mkdir(parents=True,exist_ok=True)
+              target.write_bytes(payload)
+          print(f"PASS: {len(destinations)} files authenticated and extracted; ZIP SHA-256={EXPECTED_SHA}")
+          print("Original manuscript excluded from public deposit; Noble BED unresolved.")
+          PY
+      - name: Commit validated supplementary release
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- supplementary/ figures/ provenance/verification/
+          if git diff --cached --quiet; then
+            echo "All 59 Stage31 release files already identical. No changes."
+          else
+            git commit -m "Deposit Stage31 verified S01-S17 and data-derived figures"
+            git push origin HEAD:main
+            echo "PASS: Stage31 files committed to main."
+          fi
